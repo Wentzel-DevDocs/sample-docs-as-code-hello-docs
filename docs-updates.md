@@ -1,7 +1,7 @@
 # Docs updates
 
-As of 2025-07-15, this sample is at **0.1.0**.
+As of 2025-08-12, this sample is at **0.1.0-dev**.
 
-Latest change: Initial docs scaffold and home page.
+Latest change: Add getting started content.
 
 Product: Hullo CLI. Publish slug: `helloapi`.

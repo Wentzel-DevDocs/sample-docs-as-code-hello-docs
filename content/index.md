@@ -7,7 +7,7 @@ audience: all
 category: overview
 product: Hullo CLI
 owners: docs-platform
-last_reviewed: 2025-07-15
+last_reviewed: 2025-08-12
 ---
 
 # Introduction
