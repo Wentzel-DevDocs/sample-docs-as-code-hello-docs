@@ -5,6 +5,6 @@
   "summary": "Documentation for Hullo, a single-binary CLI that serves configurable mock HTTP APIs for local development.",
   "sampleQuestion": "How do I change the port Hullo serves on?",
   "product": "Hullo CLI",
-  "docsVersion": "0.1.0-dev",
+  "docsVersion": "0.2.0",
   "supportEmail": "docs-sample@example.com"
 }
