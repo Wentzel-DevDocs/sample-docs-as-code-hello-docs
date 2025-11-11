@@ -1,7 +1,7 @@
 # Docs updates
 
-As of 2025-10-14, this sample is at **0.3.0-dev**.
+As of 2025-11-11, this sample is at **0.3.0**.
 
-Latest change: Add reference material and cross-links.
+Latest change: Publish workflow and package tooling.
 
 Product: Hullo CLI. Publish slug: `helloapi`.
