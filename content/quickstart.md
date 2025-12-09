@@ -7,7 +7,7 @@ audience: developers
 category: tutorial
 product: Hullo CLI
 owners: docs-platform
-last_reviewed: 2025-11-11
+last_reviewed: 2025-12-09
 ---
 
 # Quickstart

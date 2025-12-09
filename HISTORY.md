@@ -3,6 +3,7 @@
 Change log for the **Hullo CLI** sample docs-as-code repository.
 Dates are demo history for timeline and version graphs.
 
+- **2025-12-09**: Improve examples and sample questions
 - **2025-11-11** (`v0.3.0`): Publish workflow and package tooling
 - **2025-10-14**: Add reference material and cross-links
 - **2025-09-09** (`v0.2.0`): Expand core guides and navigation structure

@@ -1,6 +1,6 @@
 {
   "name": "sample-hello-docs",
-  "version": "0.3.0",
+  "version": "0.5.0-dev",
   "private": true,
   "description": "Simple enterprise sample docs-as-code repo (Hullo CLI) for hosted.devdocs.ai sample ingestion demos.",
   "type": "module",
