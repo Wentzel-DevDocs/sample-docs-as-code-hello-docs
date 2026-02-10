@@ -1,0 +1,22 @@
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD024": false,
+    "MD025": false,
+    "MD033": false,
+    "MD036": false,
+    "MD041": false,
+    "MD040": false,
+    "MD012": { "maximum": 2 }
+  },
+  "globs": [
+    "content/**/*.md",
+    "snippets/**/*.md",
+    "CONTRIBUTING.md",
+    "STYLEGUIDE.md",
+    "VERSIONING.md",
+    "I18N.md"
+  ],
+  "ignores": ["node_modules/**", "dist/**", "README.md", "LICENSE", "assets/**"]
+}

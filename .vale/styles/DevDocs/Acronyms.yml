@@ -1,0 +1,8 @@
+extends: existence
+message: "Spell out '%s' on first use (sample enterprise rule)."
+level: suggestion
+ignorecase: false
+tokens:
+  - '\bAPI\b'
+  - '\bCLI\b'
+  - '\bSDK\b'
