@@ -1,0 +1,16 @@
+# Wentzel-DevDocs is currently a GitHub user account (not an org), so team
+# handles are not available. All paths require review from the account owner.
+# When this account is converted to an organization, replace with:
+#   @Wentzel-DevDocs/docs-platform
+#   @Wentzel-DevDocs/docs-writers
+#   @Wentzel-DevDocs/api-docs
+# See TEAMS.md in the sample-docs-as-code meta repo.
+
+*                         @Wentzel-DevDocs
+/content/                 @Wentzel-DevDocs
+/content/reference/       @Wentzel-DevDocs
+/openapi/                 @Wentzel-DevDocs
+/asyncapi/                @Wentzel-DevDocs
+/docs.config.json         @Wentzel-DevDocs
+/scripts/                 @Wentzel-DevDocs
+/.github/                 @Wentzel-DevDocs
