@@ -7,7 +7,7 @@ audience: all
 category: concept
 product: Hullo CLI
 owners: docs-platform
-last_reviewed: 2026-05-12
+last_reviewed: 2026-06-09
 ---
 
 # Versioning strategy

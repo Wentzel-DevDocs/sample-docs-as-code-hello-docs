@@ -3,6 +3,7 @@
 Change log for the **Hullo CLI** sample docs-as-code repository.
 Dates are demo history for timeline and version graphs.
 
+- **2026-06-09** (`v1.1.0`): Contracts, includes, and advanced artifacts
 - **2026-05-12** (`v1.0.0`): i18n stub and versioning strategy pages
 - **2026-04-14**: Assets pipeline and diagram updates
 - **2026-03-10** (`v0.5.0`): Style guide, contributing docs, and CODEOWNERS
