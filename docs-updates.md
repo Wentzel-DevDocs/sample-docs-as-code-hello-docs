@@ -1,7 +1,7 @@
 # Docs updates
 
-As of 2026-06-09, this sample is at **1.1.0**.
+As of 2026-07-07, this sample is at **0.12.0-dev**.
 
-Latest change: Contracts, includes, and advanced artifacts.
+Latest change: Dependabot, pinned Actions, preview comments.
 
 Product: Hullo CLI. Publish slug: `helloapi`.

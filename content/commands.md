@@ -7,7 +7,7 @@ audience: developers
 category: reference
 product: Hullo CLI
 owners: docs-platform
-last_reviewed: 2026-06-09
+last_reviewed: 2026-07-07
 ---
 
 # Commands
