@@ -1,7 +1,7 @@
 # Docs updates
 
-As of 2026-07-07, this sample is at **0.12.0-dev**.
+As of 2026-07-16, this sample is at **1.2.0**.
 
-Latest change: Dependabot, pinned Actions, preview comments.
+Latest change: Sample pack polish for ingestion demos.
 
 Product: Hullo CLI. Publish slug: `helloapi`.
