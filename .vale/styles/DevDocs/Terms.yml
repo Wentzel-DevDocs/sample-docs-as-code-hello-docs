@@ -1,0 +1,11 @@
+extends: substitution
+message: "Use '%s' instead of '%s'."
+level: error
+ignorecase: true
+swap:
+  click here: the following link
+  simply: ""
+  just: ""
+  easy: straightforward
+  e.g.: for example
+  i.e.: that is

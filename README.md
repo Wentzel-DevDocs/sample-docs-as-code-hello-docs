@@ -77,3 +77,19 @@ Open the chat widget and ask: **How do I change the port Hullo serves on?**
 | [sample-docs-as-code-hello-docs](https://github.com/Wentzel-DevDocs/sample-docs-as-code-hello-docs) | Simple / flat |
 | [sample-docs-as-code-acme-api](https://github.com/Wentzel-DevDocs/sample-docs-as-code-acme-api) | Medium / API + OpenAPI |
 | [sample-docs-as-code-nimbus-platform](https://github.com/Wentzel-DevDocs/sample-docs-as-code-nimbus-platform) | Complex / multi-section platform |
+
+## Enterprise features (v1.2)
+
+- **Vale** (`.vale.ini` + DevDocs styles) and **markdownlint-cli2**
+- **Assets** under `assets/` with alt-text enforcement in `npm run check`
+- **i18n stub** at `content/es/`
+- **Version stubs** at `content/versions/`
+- **Dependabot** + SHA-pinned GitHub Actions
+- **PR preview comment** workflow
+- **Snippet includes**: `<!-- include: name.md -->` from `snippets/`
+- **CODEOWNERS** (see meta-repo `TEAMS.md` for org team migration)
+- Meta ladder: [sample-docs-as-code](https://github.com/Wentzel-DevDocs/sample-docs-as-code)
+
+```bash
+npm test   # check + markdownlint + dry-run build
+```

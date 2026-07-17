@@ -23,7 +23,7 @@
  */
 
 import { createHash } from "node:crypto";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
@@ -35,7 +35,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const CONTENT_DIR = path.join(ROOT, "content");
 const DIST_DIR = path.join(ROOT, "dist");
 const BROKER_URL = "https://hosted.devdocs.ai/api/broker/push";
-const GENERATOR = "sample-docs-generator/1.1.0";
+const GENERATOR = "sample-docs-generator/1.2.0";
 
 const config = JSON.parse(await readFile(path.join(ROOT, "docs.config.json"), "utf8"));
 
@@ -72,6 +72,25 @@ function parseFrontmatter(raw) {
     meta[kv[1]] = value;
   }
   return { meta, body: raw.slice(match[0].length) };
+}
+
+
+/* ------------------------------ includes ------------------------------ */
+
+/** Expand <!-- include: path --> from repo root or snippets/. Partials should not carry page frontmatter. */
+function expandIncludes(body) {
+  return body.replace(/<!--\s*include:\s*([^\s]+?)\s*-->/g, (_m, rel) => {
+    const cleaned = rel.replace(/^\/+/, "");
+    const candidates = [path.join(ROOT, cleaned), path.join(ROOT, "snippets", cleaned)];
+    for (const abs of candidates) {
+      if (existsSync(abs)) {
+        const included = readFileSync(abs, "utf8");
+        const stripped = included.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
+        return stripped.trimEnd() + "\n";
+      }
+    }
+    throw new Error(`include not found: ${rel}`);
+  });
 }
 
 function stripInlineMarkdown(text) {
@@ -211,11 +230,14 @@ for (const abs of mdFiles) {
   const pagePath = rel.replace(/\.md$/, ""); // content/index.md -> "index"
   assertSafePath(pagePath);
   const raw = await readFile(abs, "utf8");
-  const { meta, body } = parseFrontmatter(raw);
+  const { meta, body: bodyRaw } = parseFrontmatter(raw);
+  const body = expandIncludes(bodyRaw);
   const title = meta.title || firstHeading(body) || titleCase(path.posix.basename(pagePath));
   const description = meta.description || firstParagraph(body) || title;
   // The reader renders the page title itself, so drop a leading H1 from the body.
   const { bodyHtml, toc } = renderPage(body.replace(/^\s*#\s+.+\r?\n/, ""));
+  const fmMatch = raw.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
+  const rawExpanded = (fmMatch ? fmMatch[0] : "") + body;
   const dir = path.posix.dirname(pagePath);
   const enterprise = {};
   for (const key of ["status", "audience", "owners", "last_reviewed", "product", "category"]) {
@@ -230,7 +252,7 @@ for (const abs of mdFiles) {
     bodyHtml,
     toc,
     enterprise,
-    rawBytes: Buffer.from(raw, "utf8"), // the .md artifact is the verbatim source
+    rawBytes: Buffer.from(rawExpanded, "utf8"), // frontmatter + body with includes expanded
   });
 }
 
@@ -374,6 +396,34 @@ for (const item of config.extraArtifacts || []) {
   if (!existsSync(abs)) throw new Error(`extraArtifact source missing: ${item.source}`);
   const bytes = await readFile(abs);
   addArtifact(item.path, bytes, item.contentType || "application/octet-stream");
+}
+
+
+
+// Publish versioned static assets (SVG/PNG) under content-adjacent assets/ for demos.
+const assetsDir = path.join(ROOT, "assets");
+if (existsSync(assetsDir)) {
+  async function walkAssets(dir, relBase = "") {
+    for (const entry of await readdir(dir, { withFileTypes: true })) {
+      const rel = relBase ? `${relBase}/${entry.name}` : entry.name;
+      const abs = path.join(dir, entry.name);
+      if (entry.isDirectory()) await walkAssets(abs, rel);
+      else if (entry.isFile() && /\.(svg|png|jpg|jpeg|webp|gif)$/i.test(entry.name)) {
+        const bytes = await readFile(abs);
+        const ext = path.extname(entry.name).toLowerCase();
+        const types = {
+          ".svg": "image/svg+xml",
+          ".png": "image/png",
+          ".jpg": "image/jpeg",
+          ".jpeg": "image/jpeg",
+          ".webp": "image/webp",
+          ".gif": "image/gif",
+        };
+        addArtifact(`assets/${rel}`, bytes, types[ext] || "application/octet-stream");
+      }
+    }
+  }
+  await walkAssets(assetsDir);
 }
 
 const entries = artifacts.map((a) => ({

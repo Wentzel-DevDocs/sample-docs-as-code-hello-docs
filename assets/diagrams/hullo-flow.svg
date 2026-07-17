@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="220" viewBox="0 0 720 220" role="img" aria-labelledby="title desc">
+  <title id="title">Hullo mock API flow</title>
+  <desc id="desc">Developer writes hullo.yaml, runs hullo serve, and the app under test calls the mock HTTP API.</desc>
+  <rect width="720" height="220" fill="#0b1120"/>
+  <rect x="24" y="70" width="160" height="80" rx="12" fill="#1a2640" stroke="#07a4fd" stroke-width="2"/>
+  <text x="104" y="108" fill="#fff" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle">hullo.yaml</text>
+  <text x="104" y="128" fill="#8992c1" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">routes + latency</text>
+  <path d="M196 110 H250" stroke="#ff5c00" stroke-width="3" marker-end="url(#a)"/>
+  <rect x="260" y="70" width="180" height="80" rx="12" fill="#1a2640" stroke="#3b109e" stroke-width="2"/>
+  <text x="350" y="108" fill="#fff" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle">hullo serve</text>
+  <text x="350" y="128" fill="#8992c1" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">mock HTTP server</text>
+  <path d="M452 110 H506" stroke="#ff5c00" stroke-width="3" marker-end="url(#a)"/>
+  <rect x="516" y="70" width="180" height="80" rx="12" fill="#1a2640" stroke="#07a4fd" stroke-width="2"/>
+  <text x="606" y="108" fill="#fff" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle">Your app</text>
+  <text x="606" y="128" fill="#8992c1" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">calls localhost</text>
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#ff5c00"/>
+    </marker>
+  </defs>
+</svg>

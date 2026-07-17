@@ -1,0 +1,66 @@
+name: Docs preview comment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Build preview artifacts
+        run: npm test
+      - name: Comment preview links
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const slug = 'helloapi';
+            const sha = context.payload.pull_request.head.sha.slice(0, 7);
+            const body = [
+              '### Docs preview',
+              '',
+              'Quality gate and dry-run build passed for this PR.',
+              '',
+              '| Surface | URL |',
+              '| --- | --- |',
+              `| Live site (after merge + publish) | https://${slug}.hosted.devdocs.ai |`,
+              `| Suggested preview label | pr-${context.payload.pull_request.number}-${sha} |`,
+              '',
+              'Artifacts were built with `npm test` (check + dry-run).',
+              'Set `HOSTED_DOCS_PUSH_TOKEN` on the repo to publish from `main`.',
+              '',
+              '<!-- docs-preview-bot -->'
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body && c.body.includes('<!-- docs-preview-bot -->'));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

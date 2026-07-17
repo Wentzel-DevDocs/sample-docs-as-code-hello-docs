@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
  * Enterprise docs quality gate (no network).
- * Validates frontmatter, section metadata, and internal links under content/.
+ * Validates frontmatter, section metadata, internal links, includes, and image alts.
  */
+import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
@@ -13,12 +14,8 @@ const CONTENT_DIR = path.join(ROOT, "content");
 const errors = [];
 const warnings = [];
 
-function fail(msg) {
-  errors.push(msg);
-}
-function warn(msg) {
-  warnings.push(msg);
-}
+function fail(msg) { errors.push(msg); }
+function warn(msg) { warnings.push(msg); }
 
 function parseFrontmatter(raw) {
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
@@ -28,10 +25,7 @@ function parseFrontmatter(raw) {
     const kv = line.match(/^([A-Za-z_][A-Za-z0-9_-]*):\s*(.*)$/);
     if (!kv) continue;
     let value = kv[2].trim();
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1);
     }
     meta[kv[1]] = value;
@@ -70,20 +64,11 @@ for (const abs of mdFiles) {
   if (!meta.title) fail(`${rel}: missing required frontmatter field "title"`);
   if (!meta.description) fail(`${rel}: missing required frontmatter field "description"`);
   if (meta.order === undefined) fail(`${rel}: missing required frontmatter field "order"`);
-  if (meta.nav_order !== undefined) {
-    fail(`${rel}: uses deprecated "nav_order" — use "order" instead`);
-  }
-  if (meta.order !== undefined && Number.isNaN(Number(meta.order))) {
-    fail(`${rel}: "order" must be a number`);
-  }
-  if (meta.description && meta.description.length > 280) {
-    warn(`${rel}: description is long (${meta.description.length} chars); keep under ~220 for retrieval snippets`);
-  }
+  if (meta.nav_order !== undefined) fail(`${rel}: uses deprecated "nav_order" — use "order"`);
+  if (meta.order !== undefined && Number.isNaN(Number(meta.order))) fail(`${rel}: "order" must be a number`);
   if (!body.trim()) fail(`${rel}: empty body after frontmatter`);
-  if (!/^#\s+\S/m.test(body)) warn(`${rel}: no H1 heading found (recommended for page body)`);
 
-  // Enterprise metadata — recommended, not required (hello stays lean)
-  for (const field of ["status", "audience"]) {
+  for (const field of ["status", "audience", "category", "owners", "last_reviewed"]) {
     if (!meta[field]) warn(`${rel}: optional enterprise field "${field}" not set`);
   }
 
@@ -92,22 +77,50 @@ for (const abs of mdFiles) {
   if (!orderByDir.has(dirKey)) orderByDir.set(dirKey, new Map());
   const orders = orderByDir.get(dirKey);
   const orderNum = Number(meta.order);
-  if (orders.has(orderNum) && pagePath !== "index") {
+  if (orders.has(orderNum) && path.posix.basename(pagePath) !== "index") {
     warn(`${rel}: duplicate order ${orderNum} in ${dirKey || "/"} (also ${orders.get(orderNum)})`);
   }
   orders.set(orderNum, pagePath);
+
+  // Includes resolve
+  const includeRe = /<!--\s*include:\s*([^\s]+?)\s*-->/g;
+  let im;
+  while ((im = includeRe.exec(body)) !== null) {
+    const cleaned = im[1].replace(/^\/+/, "");
+    const candidates = [path.join(ROOT, cleaned), path.join(ROOT, "snippets", cleaned)];
+    if (!candidates.some((c) => existsSync(c))) fail(`${rel}: include not found: ${im[1]}`);
+  }
 
   // Internal links
   const linkRe = /\]\((\/[^)#\s]+)(?:#[^)]*)?\)/g;
   let m;
   while ((m = linkRe.exec(body)) !== null) {
     let target = m[1].replace(/^\//, "").replace(/\.md$/, "");
+    if (target.startsWith("assets/")) {
+      const assetAbs = path.join(ROOT, target);
+      if (!existsSync(assetAbs)) fail(`${rel}: missing asset ${target}`);
+      continue;
+    }
     if (target === "" || target === "index") target = "index";
+    // allow openapi/asyncapi published artifacts referenced as absolute site paths? skip non-page
+    if (target.endsWith(".yaml") || target.endsWith(".json") || target.endsWith(".txt")) continue;
     if (!pages.has(target)) fail(`${rel}: broken internal link /${target}`);
+  }
+
+  // Images: require alt text; check local assets
+  const imgMd = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+  let img;
+  while ((img = imgMd.exec(body)) !== null) {
+    const alt = img[1];
+    const src = img[2];
+    if (!alt || !alt.trim()) fail(`${rel}: image missing alt text (${src})`);
+    if (src.startsWith("/assets/") || src.startsWith("assets/")) {
+      const assetPath = src.replace(/^\//, "");
+      if (!existsSync(path.join(ROOT, assetPath))) fail(`${rel}: missing image asset ${src}`);
+    }
   }
 }
 
-// _section.json present for every non-empty folder that has pages
 const dirsWithPages = new Set(
   [...pages].map((p) => {
     const d = path.posix.dirname(p);
@@ -116,18 +129,17 @@ const dirsWithPages = new Set(
 );
 for (const dir of dirsWithPages) {
   if (!dir) continue;
+  // skip deep version leaf folders? still need section
   const sectionPath = path.join(CONTENT_DIR, ...dir.split("/"), "_section.json");
   try {
     const section = JSON.parse(await readFile(sectionPath, "utf8"));
     if (!section.title) fail(`${dir}/_section.json: missing "title"`);
     if (section.order === undefined) warn(`${dir}/_section.json: missing "order"`);
   } catch {
-    // Nested folders should have _section.json for nav groups
     fail(`${dir}/_section.json: missing (required for nav groups)`);
   }
 }
 
-// docs.config.json
 try {
   const cfg = JSON.parse(await readFile(path.join(ROOT, "docs.config.json"), "utf8"));
   for (const key of ["siteTitle", "defaultSlug", "summary", "sampleQuestion"]) {

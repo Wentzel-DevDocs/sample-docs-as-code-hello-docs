@@ -16,8 +16,9 @@ Hullo is a small command-line tool that spins up a mock HTTP API on your machine
 
 It is useful when the real backend does not exist yet, is flaky, or is too slow to develop against.
 
-
 ## How it fits together
+
+![Developer configures hullo.yaml, runs hullo serve, and the app under test calls the mock API](/assets/diagrams/hullo-flow.svg)
 
 ```mermaid
 flowchart LR
@@ -57,3 +58,7 @@ curl http://localhost:4200/hello
 - [Quickstart](/quickstart) — create a project and add your first custom route.
 - [Commands](/commands) — reference for every `hullo` subcommand and flag.
 - [Configuration](/configuration) — the full `hullo.yaml` schema.
+
+<!-- include: auth-note.md -->
+
+<!-- include: support-footer.md -->
