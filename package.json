@@ -19,6 +19,6 @@
     "sanitize-html": "^2.13.0"
   },
   "devDependencies": {
-    "markdownlint-cli2": "^0.17.2"
+    "markdownlint-cli2": "^0.23.1"
   }
 }
