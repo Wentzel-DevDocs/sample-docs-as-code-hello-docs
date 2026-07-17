@@ -1,0 +1,7 @@
+{
+  "siteTitle": "Hello CLI Docs",
+  "generator": "sample-docs-builder/1.0.0 (sample-hello-docs)",
+  "defaultSlug": "helloapi",
+  "sampleQuestion": "How do I change the port hello serve uses?",
+  "llmsTxt": false
+}

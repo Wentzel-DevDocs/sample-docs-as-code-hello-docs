@@ -1,0 +1,16 @@
+{
+  "name": "sample-hello-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple sample docs-as-code repo (Hullo CLI) that publishes to hosted.devdocs.ai via the broker push contract.",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "build": "DRY_RUN=1 node scripts/publish.mjs",
+    "publish": "node scripts/publish.mjs"
+  },
+  "dependencies": {
+    "marked": "^12.0.2",
+    "sanitize-html": "^2.13.0"
+  }
+}
