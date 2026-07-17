@@ -2,6 +2,12 @@
 title: Quickstart
 description: Create a Hullo project, start the mock server, call an endpoint, and add a custom route with live reload.
 order: 2
+status: stable
+audience: developers
+category: tutorial
+product: Hullo CLI
+owners: docs-platform
+last_reviewed: 2026-07-01
 ---
 
 # Quickstart

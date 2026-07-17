@@ -2,6 +2,12 @@
 title: Configuration
 description: The complete hullo.yaml reference — top-level keys, route fields, templating, body files, defaults, and environment variable overrides.
 order: 4
+status: stable
+audience: developers
+category: reference
+product: Hullo CLI
+owners: docs-platform
+last_reviewed: 2026-07-01
 ---
 
 # Configuration

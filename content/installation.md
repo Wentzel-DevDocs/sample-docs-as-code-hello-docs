@@ -2,6 +2,12 @@
 title: Installation
 description: Install the Hullo CLI with npm, Homebrew, or a standalone binary, then verify, upgrade, or uninstall it.
 order: 1
+status: stable
+audience: developers
+category: reference
+product: Hullo CLI
+owners: docs-platform
+last_reviewed: 2026-07-01
 ---
 
 # Installation

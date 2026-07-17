@@ -35,7 +35,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const CONTENT_DIR = path.join(ROOT, "content");
 const DIST_DIR = path.join(ROOT, "dist");
 const BROKER_URL = "https://hosted.devdocs.ai/api/broker/push";
-const GENERATOR = "sample-docs-generator/1.0.0";
+const GENERATOR = "sample-docs-generator/1.1.0";
 
 const config = JSON.parse(await readFile(path.join(ROOT, "docs.config.json"), "utf8"));
 
@@ -217,6 +217,10 @@ for (const abs of mdFiles) {
   // The reader renders the page title itself, so drop a leading H1 from the body.
   const { bodyHtml, toc } = renderPage(body.replace(/^\s*#\s+.+\r?\n/, ""));
   const dir = path.posix.dirname(pagePath);
+  const enterprise = {};
+  for (const key of ["status", "audience", "owners", "last_reviewed", "product", "category"]) {
+    if (meta[key] !== undefined && meta[key] !== "") enterprise[key] = meta[key];
+  }
   pages.push({
     path: pagePath,
     dir: dir === "." ? "" : dir,
@@ -225,6 +229,7 @@ for (const abs of mdFiles) {
     description,
     bodyHtml,
     toc,
+    enterprise,
     rawBytes: Buffer.from(raw, "utf8"), // the .md artifact is the verbatim source
   });
 }
@@ -338,7 +343,14 @@ for (const p of pages) {
     `${p.path}.page.json`,
     Buffer.from(
       JSON.stringify(
-        { path: p.path, title: p.title, description: p.description, bodyHtml: p.bodyHtml, toc: p.toc },
+        {
+          path: p.path,
+          title: p.title,
+          description: p.description,
+          bodyHtml: p.bodyHtml,
+          toc: p.toc,
+          ...(Object.keys(p.enterprise).length ? { meta: p.enterprise } : {}),
+        },
         null,
         2
       ) + "\n",
@@ -351,6 +363,17 @@ for (const p of pages) {
 
 if (config.generateLlmsTxt) {
   addArtifact("llms.txt", Buffer.from(buildLlmsTxt(), "utf8"), "text/plain");
+}
+
+// Optional non-markdown artifacts (OpenAPI, redirects, etc.) listed in docs.config.json.
+for (const item of config.extraArtifacts || []) {
+  if (!item?.path || !item?.source) {
+    throw new Error("extraArtifacts entries require path and source");
+  }
+  const abs = path.join(ROOT, item.source);
+  if (!existsSync(abs)) throw new Error(`extraArtifact source missing: ${item.source}`);
+  const bytes = await readFile(abs);
+  addArtifact(item.path, bytes, item.contentType || "application/octet-stream");
 }
 
 const entries = artifacts.map((a) => ({

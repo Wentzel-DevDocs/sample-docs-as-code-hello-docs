@@ -1,0 +1,9 @@
+# Sample CODEOWNERS for enterprise docs-as-code demos.
+# Replace team handles with your org's real docs owners.
+
+*                         @Wentzel-DevDocs/docs-platform
+/content/                 @Wentzel-DevDocs/docs-writers @Wentzel-DevDocs/docs-platform
+/content/reference/       @Wentzel-DevDocs/api-docs @Wentzel-DevDocs/docs-writers
+/docs.config.json         @Wentzel-DevDocs/docs-platform
+/scripts/                 @Wentzel-DevDocs/docs-platform
+/.github/                 @Wentzel-DevDocs/docs-platform

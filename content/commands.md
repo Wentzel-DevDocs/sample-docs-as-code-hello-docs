@@ -2,6 +2,12 @@
 title: Commands
 description: Reference for every Hullo subcommand — init, serve, routes, check, and version — with their flags and defaults.
 order: 3
+status: stable
+audience: developers
+category: reference
+product: Hullo CLI
+owners: docs-platform
+last_reviewed: 2026-07-01
 ---
 
 # Commands
