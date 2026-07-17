@@ -1,7 +1,8 @@
 {
-  "siteTitle": "Hello CLI Docs",
+  "siteTitle": "Hullo CLI",
   "generator": "sample-docs-builder/1.0.0 (sample-hello-docs)",
   "defaultSlug": "helloapi",
-  "sampleQuestion": "How do I change the port hello serve uses?",
-  "llmsTxt": false
+  "sampleQuestion": "How do I change the port Hullo serves on?",
+  "llmsTxt": false,
+  "llmsSummary": "Documentation for Hullo, a single-binary CLI that serves configurable mock HTTP APIs for local development."
 }
